@@ -27,9 +27,7 @@ public class CommandClaimPlot extends Command {
 
                 if(money >= 500) {
                     this.plugin.getPlotAPI().claimPlot(((Player) sender).getChunk(), ((Player) sender).getPlayer());
-                    this.plugin.getPlayerAPI().pay(500, sender.getName());
-                    ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(((Player) sender).getUniqueId());
-                    scoreBoardManagerAPI.updateBoard("  §aCimey-Coins: §9"+this.plugin.getPlayerAPI().getPlayerCoins(((Player) sender).getPlayer().getName()), 1);
+                    this.plugin.getPlayerAPI().pay(500, ((Player) sender).getPlayer());
 
                     sender.sendMessage("§aDu hast das Plot erfolgreich §egeclaimt §aund 500cc ausgegeben!");
                 }
@@ -43,9 +41,7 @@ public class CommandClaimPlot extends Command {
                 if(this.plugin.getPlayerAPI().getPlayerCoins(sender.getName()) >= this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk()))
                 {
                     this.plugin.getPlotAPI().buyPlot(((Player) sender).getChunk(), ((Player) sender).getPlayer());
-                    this.plugin.getPlayerAPI().pay(this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk()), sender.getName());
-                    ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(((Player) sender).getUniqueId());
-                    scoreBoardManagerAPI.updateBoard("  §aCimey-Coins: §9"+this.plugin.getPlayerAPI().getPlayerCoins(((Player) sender).getPlayer().getName()), 1);
+                    this.plugin.getPlayerAPI().pay(this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk()), ((Player) sender).getPlayer());
 
                     sender.sendMessage("§aDu hast das Plot erfolgreich §egekauft §aund "+this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk())+"cc ausgegeben!");
                 }

@@ -1,5 +1,6 @@
 package de.cimeyclust.util;
 
+import cn.nukkit.Player;
 import cn.nukkit.utils.Config;
 import de.cimeyclust.CimeyCraft;
 
@@ -21,10 +22,12 @@ public class PlayerAPI {
         return this.config.getInt("player."+path+".coins");
     }
 
-    public void pay(Integer amount, String path)
+    public void pay(Integer amount, Player player)
     {
-        this.config.set("player."+path+".coins", (this.config.getInt("player."+path+".coins")-amount));
+        this.config.set("player."+player.getName()+".coins", (this.config.getInt("player."+player.getName()+".coins")-amount));
         this.config.save(this.file);
+        ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
+        scoreBoardManagerAPI.updateBoard("  §aCimey-Coins: §9", 1);
     }
 
     public String getPlayerGuildState(String path) {
