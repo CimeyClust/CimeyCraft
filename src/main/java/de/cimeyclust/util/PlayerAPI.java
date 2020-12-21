@@ -26,8 +26,9 @@ public class PlayerAPI {
     {
         this.config.set("player."+player.getName()+".coins", (this.config.getInt("player."+player.getName()+".coins")-amount));
         this.config.save(this.file);
+
         ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
-        scoreBoardManagerAPI.updateBoard("  §aCimey-Coins: §9", 1);
+        scoreBoardManagerAPI.updateBoard("  §aCimey-Coins: §9"+this.plugin.getPlayerAPI().getPlayerCoins(player.getName()), 1);
     }
 
     public String getPlayerGuildState(String path) {

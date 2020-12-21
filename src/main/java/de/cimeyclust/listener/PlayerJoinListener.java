@@ -60,7 +60,7 @@ public class PlayerJoinListener implements Listener
         {
             scoreBoardManagerAPI.addEntry("  §aRanking: §9"+this.plugin.getPlayerAPI().getPlayerGuildState(event.getPlayer().getName())+"  ", 3);
         }
-
+        this.plugin.getScoreBoardManagerAPIMap().put(event.getPlayer().getUniqueId(), scoreBoardManagerAPI);
         scoreBoardManagerAPI.setScoreBoard(event.getPlayer());
     }
 }

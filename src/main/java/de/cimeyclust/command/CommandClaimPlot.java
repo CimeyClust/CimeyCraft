@@ -38,16 +38,19 @@ public class CommandClaimPlot extends Command {
             }
             else if (plotowner != null && plotstatus.equals("selling"))
             {
-                if(this.plugin.getPlayerAPI().getPlayerCoins(sender.getName()) >= this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk()))
-                {
-                    this.plugin.getPlotAPI().buyPlot(((Player) sender).getChunk(), ((Player) sender).getPlayer());
-                    this.plugin.getPlayerAPI().pay(this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk()), ((Player) sender).getPlayer());
-
-                    sender.sendMessage("§aDu hast das Plot erfolgreich §egekauft §aund "+this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk())+"cc ausgegeben!");
+                if(plotowner.equals(sender.getName())) {
+                    sender.sendMessage("§aDu hast den Verkauf rückgängig gemacht!\nDas Plot gehört nun wieder dir!");
                 }
-                else
+                else  if (!plotowner.equals(sender.getName()))
                 {
-                    sender.sendMessage("§cDu hast nur noch "+this.plugin.getPlayerAPI().getPlayerCoins(sender.getName())+"cc, aber das Plot kostet "+this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk())+"cc!");
+                    if (this.plugin.getPlayerAPI().getPlayerCoins(sender.getName()) >= this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk())) {
+                        this.plugin.getPlotAPI().buyPlot(((Player) sender).getChunk(), ((Player) sender).getPlayer());
+                        this.plugin.getPlayerAPI().pay(this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk()), ((Player) sender).getPlayer());
+
+                        sender.sendMessage("§aDu hast das Plot erfolgreich §egekauft §aund " + this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk()) + "cc ausgegeben!");
+                    } else {
+                        sender.sendMessage("§cDu hast nur noch " + this.plugin.getPlayerAPI().getPlayerCoins(sender.getName()) + "cc, aber das Plot kostet " + this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk()) + "cc!");
+                    }
                 }
             }
             else

@@ -39,7 +39,7 @@ public class ScoreBoardManagerAPI
         if(this.entry.containsKey(score))
         {
             this.scoreboardDisplay.removeEntry(this.entry.get(score).get());
-            this.entry.get(score).set(this.scoreboardDisplay.addLine(line, score));
+            this.entry.get(score).set(scoreboardDisplay.addLine(line, score));
         }
     }
 }

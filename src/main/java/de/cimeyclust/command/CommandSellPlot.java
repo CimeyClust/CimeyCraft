@@ -25,6 +25,7 @@ public class CommandSellPlot extends Command
                     if (args.length == 1) {
                         try{
                             this.plugin.getPlotAPI().sell(((Player) sender).getChunk(), Integer.parseInt(args[0]));
+                            sender.sendMessage("§aDu hast dein Plot für "+Integer.parseInt(args[0])+" zum Verkauf bereitgestellt!\nUm es rückgängig zu machen, gebe einfach wieder /claim ein.");
                         }
                         catch (Exception e)
                         {
