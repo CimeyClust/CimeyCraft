@@ -31,7 +31,7 @@ public class PlayerAPI {
         scoreBoardManagerAPI.updateBoard("  §aCimey-Coins: §9"+this.plugin.getPlayerAPI().getPlayerCoins(player.getName()), 1);
     }
 
-    public void income(Integer amount, Player player)
+    public void incomeByPlayer(Integer amount, Player player)
     {
         this.config.set("player."+player.getName()+".coins", (this.config.getInt("player."+player.getName()+".coins")+amount));
         this.config.save(this.file);
@@ -44,6 +44,12 @@ public class PlayerAPI {
         {
 
         }
+    }
+
+    public void incomeByName(Integer amount, String playerName)
+    {
+        this.config.set("player."+playerName+".coins", (this.config.getInt("player."+playerName+".coins")+amount));
+        this.config.save(this.file);
     }
 
     public String getPlayerGuildState(String path) {

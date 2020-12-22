@@ -21,24 +21,21 @@ public class PlayerActionListener implements Listener
     public void OnSwitchPlot(PlayerMoveEvent event)
     {
         Player player = event.getPlayer();
-        ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
         if(this.plugin.getPlotAPI().getPlotStatus(event.getPlayer().getLocation().getChunk()) != "null")
         {
+            ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
             scoreBoardManagerAPI.updateBoard("  §aPlotowner: §9"+this.plugin.getPlotAPI().getPlotOwner(event.getPlayer().getLocation().getChunk()), 5);
             scoreBoardManagerAPI.updateBoard("  §aX: §9"+ event.getPlayer().getLocation().getChunk().getX(), 6);
             scoreBoardManagerAPI.updateBoard("  §aY: §9"+event.getPlayer().getLocation().getChunk().getZ(), 7);
             scoreBoardManagerAPI.updateBoard("  §aStatus: §9"+this.plugin.getPlotAPI().getPlotStatus(event.getPlayer().getLocation().getChunk()), 8);
-            if(this.plugin.getPlotAPI().getPlotStatus(event.getPlayer().getLocation().getChunk()).equals("selling"))
-            {
-                scoreBoardManagerAPI.updateBoard("  §aPreis: §9"+this.plugin.getPlotAPI().getPlotAmount(event.getPlayer().getLocation().getChunk()), 9);
-            }
         }
         else {
+            ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
             scoreBoardManagerAPI.updateBoard("  §aStatus: §9Frei", 5);
             scoreBoardManagerAPI.updateBoard("  §aX: §9"+event.getPlayer().getLocation().getChunk().getX(), 6);
             scoreBoardManagerAPI.updateBoard("  §aY: §9"+event.getPlayer().getLocation().getChunk().getZ(), 7);
-            scoreBoardManagerAPI.updateBoard("", 8);
-            scoreBoardManagerAPI.updateBoard("", 9);
+            scoreBoardManagerAPI.updateBoard(" ", 8);
+            scoreBoardManagerAPI.updateBoard(" ", 9);
         }
     }
 

@@ -46,6 +46,11 @@ public class PlotAPI
         this.config.remove("plot."+chunk.getIndex()+".amount");
         this.config.set("plot."+chunk.getIndex()+".owner", player.getName());
         this.config.save(this.file);
+        ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
+        scoreBoardManagerAPI.updateBoard("  §aPlotowner: §9"+this.plugin.getPlotAPI().getPlotOwner(player.getLocation().getChunk()), 5);
+        scoreBoardManagerAPI.updateBoard("  §aX: §9"+ player.getLocation().getChunk().getX(), 6);
+        scoreBoardManagerAPI.updateBoard("  §aY: §9"+player.getLocation().getChunk().getZ(), 7);
+        scoreBoardManagerAPI.updateBoard("  §aStatus: §9"+this.plugin.getPlotAPI().getPlotStatus(player.getLocation().getChunk()), 8);
     }
 
     public Integer getPlotAmount(FullChunk chunk)

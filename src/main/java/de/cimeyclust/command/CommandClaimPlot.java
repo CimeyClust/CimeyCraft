@@ -48,7 +48,13 @@ public class CommandClaimPlot extends Command {
                 {
                     if (this.plugin.getPlayerAPI().getPlayerCoins(sender.getName()) >= this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk())) {
                         Player target = Server.getInstance().getPlayer(this.plugin.getPlotAPI().getPlotOwner(((Player) sender).getChunk()));
-                        this.plugin.getPlayerAPI().income(this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk()), target);
+                        if(target == null)
+                        {
+                            this.plugin.getPlayerAPI().incomeByName(this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk()), this.plugin.getPlotAPI().getPlotOwner(((Player) sender).getChunk()));
+                            sender.sendMessage("§aDer Spieler ist nicht online. Der Betrag wurde ihm offline überwiesen.");
+                        }
+
+                        this.plugin.getPlayerAPI().incomeByPlayer(this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk()), target);
                         this.plugin.getPlotAPI().buyPlot(((Player) sender).getChunk(), ((Player) sender).getPlayer());
                         this.plugin.getPlayerAPI().pay(this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk()), ((Player) sender).getPlayer());
 

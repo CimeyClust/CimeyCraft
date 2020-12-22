@@ -77,8 +77,8 @@ public class PlayerJoinListener implements Listener
             scoreBoardManagerAPI.addEntry("  §aStatus: §9Frei", 5);
             scoreBoardManagerAPI.addEntry("  §aX: §9"+event.getPlayer().getLocation().getChunk().getX(), 6);
             scoreBoardManagerAPI.addEntry("  §aY: §9"+event.getPlayer().getLocation().getChunk().getZ(), 7);
-            scoreBoardManagerAPI.addEntry("", 8);
-            scoreBoardManagerAPI.addEntry("", 9);
+            scoreBoardManagerAPI.addEntry(" ", 8);
+            scoreBoardManagerAPI.addEntry(" ", 9);
         }
         this.plugin.getScoreBoardManagerAPIMap().put(event.getPlayer().getUniqueId(), scoreBoardManagerAPI);
         scoreBoardManagerAPI.setScoreBoard(event.getPlayer());

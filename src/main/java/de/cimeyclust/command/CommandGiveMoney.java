@@ -25,7 +25,7 @@ public class CommandGiveMoney extends Command {
 
                 if(target == null)
                 {
-                    sender.sendMessage("§cDer Spieler wurde nicht gefunden!");
+                    sender.sendMessage("§cDer Spieler wurde nicht gefunden! Stelle sicher, dass er online ist.");
                 }
                 else
                 {
@@ -33,7 +33,8 @@ public class CommandGiveMoney extends Command {
                     {
                         Integer amount = Integer.parseInt(args[0]);
 
-                        this.plugin.getPlayerAPI().income(amount, target);
+                        this.plugin.getPlayerAPI().incomeByPlayer(amount, target);
+                        sender.sendMessage("§cErfolgreich den Betrag zum Guthaben des Spielers hinzugefügt!");
 
                     }
                     catch (Exception e)
