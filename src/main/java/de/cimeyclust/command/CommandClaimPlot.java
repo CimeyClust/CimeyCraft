@@ -21,7 +21,7 @@ public class CommandClaimPlot extends Command {
             String plotowner = this.plugin.getPlotAPI().getPlotOwner(((Player) sender).getChunk());
             String plotstatus = this.plugin.getPlotAPI().getPlotStatus(((Player) sender).getChunk());
 
-            if(plotowner != null)
+            if(plotstatus == "null")
             {
                 Integer money = this.plugin.getPlayerAPI().getPlayerCoins(sender.getName());
 
@@ -36,9 +36,11 @@ public class CommandClaimPlot extends Command {
                     sender.sendMessage("§cDu hast nur noch "+money+"cc, aber das Plot kostet 500cc!");
                 }
             }
-            else if (plotowner != null && plotstatus.equals("selling"))
+            else if (plotowner != "null" && plotstatus.equals("selling"))
             {
                 if(plotowner.equals(sender.getName())) {
+                    this.plugin.getPlotAPI().buyPlot(((Player) sender).getChunk(), ((Player) sender).getPlayer());
+
                     sender.sendMessage("§aDu hast den Verkauf rückgängig gemacht!\nDas Plot gehört nun wieder dir!");
                 }
                 else  if (!plotowner.equals(sender.getName()))

@@ -1,28 +1,29 @@
 package de.cimeyclust.listener;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
+import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
-import cn.nukkit.event.player.PlayerDeathEvent;
 import cn.nukkit.event.player.PlayerDropItemEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
 import cn.nukkit.form.element.ElementButton;
 import cn.nukkit.form.element.ElementButtonImageData;
-import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
-import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.format.Chunk;
-
-import java.text.Normalizer;
+import de.cimeyclust.CimeyCraft;
 
 public class PlayerInteractListener implements Listener
 {
+    private CimeyCraft plugin;
+
+    public PlayerInteractListener(CimeyCraft plugin) {
+        this.plugin = plugin;
+    }
+
+
     @EventHandler
     public void OnItemDropCompass(PlayerDropItemEvent event)
     {
@@ -70,6 +71,36 @@ public class PlayerInteractListener implements Listener
             window.addButton(teleportButton);
             window.addButton(gildenButton);
             player.showFormWindow(window);
+        }
+    }
+
+    @EventHandler
+    public void PlayerInteractWithBlock(PlayerInteractEvent event)
+    {
+        Player player = (Player) event.getPlayer();
+
+        if(event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK)
+        {
+            if((!this.plugin.getPlotAPI().getPlotOwner(event.getBlock().getChunk()).equals(player.getName()) || !this.plugin.getPlotAPI().getPlotStatus(event.getBlock().getChunk()).equals("owned")) && !player.isOp())
+            {
+                event.setCancelled(true);
+            }
+        }
+        if(event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+            if ((!this.plugin.getPlotAPI().getPlotOwner(event.getBlock().getChunk()).equals(player.getName()) || !this.plugin.getPlotAPI().getPlotStatus(event.getBlock().getChunk()).equals("owned")) && !player.isOp()) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void PlayerBreakWithBlock(BlockBreakEvent event)
+    {
+        Player player = (Player) event.getPlayer();
+
+        if((!this.plugin.getPlotAPI().getPlotOwner(event.getBlock().getChunk()).equals(player.getName()) || !this.plugin.getPlotAPI().getPlotStatus(event.getBlock().getChunk()).equals("owned")) && !player.isOp())
+        {
+            event.setCancelled(true);
         }
     }
 

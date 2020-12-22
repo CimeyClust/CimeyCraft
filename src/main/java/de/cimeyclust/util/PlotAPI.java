@@ -37,13 +37,13 @@ public class PlotAPI
 
     public String getPlotStatus(FullChunk chunk)
     {
-        return this.config.getString("plot."+chunk.getIndex()+".status");
+        return this.config.getString("plot."+chunk.getIndex()+".status", null);
     }
 
     public void buyPlot(FullChunk chunk, Player player)
     {
         this.config.set("plot."+chunk.getIndex()+".status", "owned");
-        this.config.set("plot."+chunk.getIndex()+".amount", null);
+        this.config.remove("plot."+chunk.getIndex()+".amount");
         this.config.set("plot."+chunk.getIndex()+".owner", player.getName());
         this.config.save(this.file);
     }

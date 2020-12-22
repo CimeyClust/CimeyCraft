@@ -58,8 +58,9 @@ public class CimeyCraft extends PluginBase
 
         manager.registerEvents(new PlayerJoinListener(this), this);
         manager.registerEvents(new PlayerQuitListener(), this);
-        manager.registerEvents(new PlayerInteractListener(), this);
+        manager.registerEvents(new PlayerInteractListener(this), this);
         manager.registerEvents(new FormWindowResponseListener(this), this);
+        manager.registerEvents(new PlayerActionListener(this), this);
     }
 
     public PlayerAPI getPlayerAPI() {
