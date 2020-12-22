@@ -1,6 +1,7 @@
 package de.cimeyclust.command;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import de.cimeyclust.CimeyCraft;
@@ -46,6 +47,8 @@ public class CommandClaimPlot extends Command {
                 else  if (!plotowner.equals(sender.getName()))
                 {
                     if (this.plugin.getPlayerAPI().getPlayerCoins(sender.getName()) >= this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk())) {
+                        Player target = Server.getInstance().getPlayer(this.plugin.getPlotAPI().getPlotOwner(((Player) sender).getChunk()));
+                        this.plugin.getPlayerAPI().income(this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk()), target);
                         this.plugin.getPlotAPI().buyPlot(((Player) sender).getChunk(), ((Player) sender).getPlayer());
                         this.plugin.getPlayerAPI().pay(this.plugin.getPlotAPI().getPlotAmount(((Player) sender).getChunk()), ((Player) sender).getPlayer());
 

@@ -7,6 +7,7 @@ de\cimeyclust\util\ScoreBoardManagerAPI.class
 de\cimeyclust\listener\PlayerJoinListener.class
 de\cimeyclust\util\PlayerAPI.class
 de\cimeyclust\listener\FormWindowResponseListener.class
+de\cimeyclust\listener\PlayerActionListener.class
 de\cimeyclust\util\GildenAPI.class
 de\cimeyclust\command\CommandSellPlot.class
 de\cimeyclust\CimeyCraft.class

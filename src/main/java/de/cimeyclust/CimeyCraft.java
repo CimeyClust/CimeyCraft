@@ -3,10 +3,7 @@ package de.cimeyclust;
 import cn.nukkit.command.SimpleCommandMap;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.plugin.PluginManager;
-import de.cimeyclust.command.CommandClaimPlot;
-import de.cimeyclust.command.CommandSellPlot;
-import de.cimeyclust.command.CommandSetLocation;
-import de.cimeyclust.command.InfoCommand;
+import de.cimeyclust.command.*;
 import de.cimeyclust.listener.*;
 import de.cimeyclust.util.*;
 
@@ -49,6 +46,7 @@ public class CimeyCraft extends PluginBase
         commandMap.register("help", new CommandSetLocation("setLocation", "Setzt deine Teleport-Punkt-Lokation.", "§cUsage: /setLocation <name>", this));
         commandMap.register("help", new CommandClaimPlot("claim", "Claime ein freies oder zum Verkauf stehendes Plot für den Kostenbetrag!", "§cUsage: /claim", new String[]{"c"}, this));
         commandMap.register("help", new CommandSellPlot("sell", "Verkaufe dein Plot für einen festgelegten Betrag! Du hast danach keinen Zugriff mehr auf dein Plot!", "§cUsage: /sell <Betrag>", this));
+        commandMap.register("help", new CommandGiveMoney("givemoney", "Gibt den angegeben Betrag an CimeyCoins dem angegeben Spieler.", "§cUsage: /givemoney <amount> <player>", this));
         commandMap.register("help", new InfoCommand("info", "Gibt die Information des Servers und des Plugins an.", "§cUsage: /info", new String[]{"i"}));
     }
 
