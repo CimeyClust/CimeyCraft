@@ -13,6 +13,8 @@ import cn.nukkit.form.element.ElementButtonImageData;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
+import cn.nukkit.level.Location;
 import de.cimeyclust.CimeyCraft;
 
 public class PlayerInteractListener implements Listener
@@ -36,17 +38,6 @@ public class PlayerInteractListener implements Listener
             player.sendMessage("§cDu kannst deinen Navigator nicht wegschmeißen!");
             event.setCancelled(true);
         }
-    }
-
-    @EventHandler
-    public void OnPlayerDeathGiveCompassToHim(PlayerRespawnEvent event)
-    {
-        Player player = event.getPlayer();
-
-        Item navigator = Item.get(Item.COMPASS);
-        navigator.setCustomName("§aNavigator");
-        navigator.addEnchantment();
-        player.getInventory().setItem(8, navigator);
     }
 
     @EventHandler

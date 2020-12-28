@@ -35,15 +35,31 @@ public class PlayerAPI {
     {
         this.config.set("player."+player.getName()+".coins", (this.config.getInt("player."+player.getName()+".coins")+amount));
         this.config.save(this.file);
+        ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
+        scoreBoardManagerAPI.updateBoard("  §aCimey-Coins: §9" + this.plugin.getPlayerAPI().getPlayerCoins(player.getName()), 1);
+    }
 
-        try {
-            ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
-            scoreBoardManagerAPI.updateBoard("  §aCimey-Coins: §9" + this.plugin.getPlayerAPI().getPlayerCoins(player.getName()), 1);
-        }
-        catch (Exception e)
+    public void setPlayerGuildState(Player player)
+    {
+        this.config.set("player."+player.getName()+".zugehoerigkeits-status", "Gildenmitglied");
+        this.config.save(this.file);
+        ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
+        scoreBoardManagerAPI.updateBoard("  §aStatus: §9"+this.plugin.getPlayerAPI().getPlayerGuildState(player.getName())+" ", 2);
+        if(!this.plugin.getPlayerAPI().getPlayerGuildState(player.getName()).equals("Einsiedler"))
         {
-
+            scoreBoardManagerAPI.updateBoard("  §aGuild: §9"+this.plugin.getPlayerAPI().getGuild(player)+"  ", 3);
         }
+    }
+
+    public void setGuild(Player player, String guildName)
+    {
+        this.config.set("player."+player.getName()+".guild", guildName);
+        this.config.save(this.file);
+    }
+
+    public String getGuild(Player player)
+    {
+        return this.config.getString("player."+player.getName()+".guild");
     }
 
     public void incomeByName(Integer amount, String playerName)

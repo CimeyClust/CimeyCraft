@@ -6,10 +6,16 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.element.ElementButton;
 import cn.nukkit.form.element.ElementButtonImageData;
+import cn.nukkit.form.element.ElementDropdown;
+import cn.nukkit.form.element.ElementInput;
 import cn.nukkit.form.response.FormResponseSimple;
+import cn.nukkit.form.window.FormWindowCustom;
+import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.level.Location;
 import de.cimeyclust.CimeyCraft;
+
+import java.util.*;
 
 public class FormWindowResponseListener implements Listener
 {
@@ -61,11 +67,8 @@ public class FormWindowResponseListener implements Listener
                         FormWindowSimple window = new FormWindowSimple("Gilden-Management", "Hier kannst du alles, was mit Gilden zu tun hat, verwalten!");
                         if(this.plugin.getPlayerAPI().getPlayerGuildState(player.getName()).equals("Einsiedler"))
                         {
-                            // Gilde erstellen Button
-                            ElementButton createGuild = new ElementButton("+Gilde erstellen+");
                             // Gilde beitreten Button
                             ElementButton joinGuild = new ElementButton("<-Gilde beitreten->");
-                            window.addButton(createGuild);
                             window.addButton(joinGuild);
                             player.showFormWindow(window);
                         }

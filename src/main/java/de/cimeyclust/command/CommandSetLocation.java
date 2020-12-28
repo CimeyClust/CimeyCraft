@@ -18,15 +18,20 @@ public class CommandSetLocation extends Command
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if(sender instanceof Player )
         {
-            Player player = (Player) sender;
+            if (((Player) sender).getLocation().getLevel().getFolderName().equals("hub")) {
+                Player player = (Player) sender;
 
-            // - setLocation
-            if(player.getLevel().getName().equals("hub")) {
-                this.plugin.getLocationAPI().addLocation(player.getName(), player.getLocation());
-                player.sendMessage("§aDu hast deinen §eTeleportations-Punkt §aerfolgreich gesetzt!");
+                // - setLocation
+                if (player.getLevel().getName().equals("hub")) {
+                    this.plugin.getLocationAPI().addLocation(player.getName(), player.getLocation());
+                    player.sendMessage("§aDu hast deinen §eTeleportations-Punkt §aerfolgreich gesetzt!");
+                } else {
+                    player.sendMessage("§cDu kannst deinen Teleportations-Punkt nur in der Overworld setzen; Nicht in einem Minispiel, im Nether oder im Ende!");
+                }
             }
-            else {
-                player.sendMessage("§cDu kannst deinen Teleportations-Punkt nur in der Overworld setzen; Nicht in einem Minispiel, im Nether oder im Ende!");
+            else
+            {
+                sender.sendMessage("§cDu kannst disen Befehl nur in der Open-World ausführen!");
             }
         }
         else

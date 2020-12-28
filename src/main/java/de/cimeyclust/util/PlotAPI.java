@@ -32,12 +32,12 @@ public class PlotAPI
 
     public String getPlotOwner(FullChunk chunk)
     {
-        return this.config.getString("plot."+chunk.getIndex()+".owner", null);
+        return this.config.getString("plot."+chunk.getIndex()+".owner");
     }
 
     public String getPlotStatus(FullChunk chunk)
     {
-        return this.config.getString("plot."+chunk.getIndex()+".status", null);
+        return this.config.getString("plot."+chunk.getIndex()+".status");
     }
 
     public void buyPlot(FullChunk chunk, Player player)

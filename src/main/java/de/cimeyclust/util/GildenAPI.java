@@ -6,6 +6,7 @@ import de.cimeyclust.CimeyCraft;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GildenAPI
 {
@@ -19,13 +20,43 @@ public class GildenAPI
         this.config = new Config(this.file, Config.YAML);
     }
 
+    public String getGuildOwner(String name)
+    {
+        return this.config.getString("guild."+name+".owner");
+    }
 
+    public List<String> getGuildAdmins(String name)
+    {
+        return this.config.getStringList("guild."+name+".verwalter");
+    }
 
-    public void createGuild(String path, Player player) {
+    public List<String> getGuildMember(String name)
+    {
+        return this.config.getStringList("guild."+name+".member");
+    }
+
+    public List<Long> getGuildPlots(String name)
+    {
+        return this.config.getLongList("guild."+name+".plots");
+    }
+
+    public void joinGuild(Player player, String guildName)
+    {
+
+    }
+
+    public void createGuild(String path, Player player, String status) {
         this.config.set("guild." + path + ".owner", player.getName());
-        this.config.set("player." + path + ".verwalter", new ArrayList<String>().add(player.getName()));
-        this.config.set("player." + path + ".member", new ArrayList<String>().add(player.getName()));
-        this.config.set("player." + path + ".status", "private");
+        this.config.set("guild." + path + ".verwalter", new ArrayList<String>(){{
+            this.add(player.getName());
+        }});
+        this.config.set("guild." + path + ".member", new ArrayList<String>(){{
+            this.add(player.getName());
+        }});
+        this.config.set("guild." + path + ".plots", new ArrayList<Long>(){{
+            this.add(player.getChunk().getIndex());
+        }});
+        this.config.set("guild." + path + ".status", status);
         this.config.save(this.file);
     }
 }

@@ -1,6 +1,8 @@
 package de.cimeyclust.listener;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerJoinEvent;
@@ -8,6 +10,9 @@ import cn.nukkit.event.player.PlayerLocallyInitializedEvent;
 import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
+import cn.nukkit.level.Location;
+import cn.nukkit.level.Position;
 import de.cimeyclust.CimeyCraft;
 import de.cimeyclust.util.ScoreBoardManagerAPI;
 
@@ -23,11 +28,9 @@ public class PlayerJoinListener implements Listener
     public void OnPlayerJoin( PlayerJoinEvent event)
     {
         Player player = event.getPlayer();
-
         player.setHealth(20);
         player.getFoodData().reset();
         player.setOnFire(0);
-        player.teleport(player.getLevel().getSafeSpawn());
         if(!player.hasPlayedBefore())
         {
             Item navigator = Item.get(Item.COMPASS);
@@ -42,14 +45,17 @@ public class PlayerJoinListener implements Listener
     @EventHandler
     public void PlayerInitializedListener(PlayerLocallyInitializedEvent event)
     {
-        this.plugin.getPlayerAPI().addDefault(event.getPlayer().getName());
         if(!event.getPlayer().hasPlayedBefore())
         {
+            this.plugin.getPlayerAPI().addDefault(event.getPlayer().getName());
             FormWindow window = new FormWindowSimple("§eWillkommen", "Hallo und willkommen auf unserem CimeyCraft-MCPE-RolePlay-Server!\n" +
                     "Kurzanleitung:\n1. Kaufe dir ein Plot\n2. Handle mit anderen Spielern\n3. Schütze dich vor anderen Spielern\n4. Schließe dich einer Gilde an\n" +
                     "Für weitere Hilfen und Informationen besuche unseren Discord-Server §ehttps://discord.gg/D2hcWACa93§f, frage andere Spieler oder benutze den §aNavigator.");
             event.getPlayer().showFormWindow(window);
         }
+        Level level = event.getPlayer().getServer().getLevelByName("hub");
+        Location loc = new Location(662, 67, 584, 0, 0, level);
+        event.getPlayer().teleport(loc);
         event.getPlayer().sendTitle("§aWillkommen", "§aauf CimeyCraft");
 
         ScoreBoardManagerAPI scoreBoardManagerAPI = new ScoreBoardManagerAPI("§3CimeyCraft");
@@ -58,10 +64,10 @@ public class PlayerJoinListener implements Listener
         scoreBoardManagerAPI.addEntry("  §aStatus: §9"+this.plugin.getPlayerAPI().getPlayerGuildState(event.getPlayer().getName())+" ", 2);
         if(!this.plugin.getPlayerAPI().getPlayerGuildState(event.getPlayer().getName()).equals("Einsiedler"))
         {
-            scoreBoardManagerAPI.addEntry("  §aRanking: §9"+this.plugin.getPlayerAPI().getPlayerGuildState(event.getPlayer().getName())+"  ", 3);
+            scoreBoardManagerAPI.addEntry("  §aGuild: §9"+this.plugin.getPlayerAPI().getGuild(event.getPlayer())+"  ", 3);
         }
         scoreBoardManagerAPI.addEntry("§3Plot:", 4);
-        if(this.plugin.getPlotAPI().getPlotStatus(event.getPlayer().getLocation().getChunk()) != "null")
+        if(!this.plugin.getPlotAPI().getPlotStatus(event.getPlayer().getLocation().getChunk()).equals(""))
         {
             scoreBoardManagerAPI.addEntry("  §aPlotowner: §9"+this.plugin.getPlotAPI().getPlotOwner(event.getPlayer().getLocation().getChunk()), 5);
             scoreBoardManagerAPI.addEntry("  §aX: §9"+ event.getPlayer().getLocation().getChunk().getX(), 6);
