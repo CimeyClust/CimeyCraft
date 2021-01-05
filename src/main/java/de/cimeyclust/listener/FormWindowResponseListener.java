@@ -65,7 +65,7 @@ public class FormWindowResponseListener implements Listener
                     else if(text.equals("Gilde"))
                     {
                         FormWindowSimple window = new FormWindowSimple("Gilden-Management", "Hier kannst du alles, was mit Gilden zu tun hat, verwalten!");
-                        if(this.plugin.getPlayerAPI().getPlayerGuildState(player.getName()).equals("Einsiedler"))
+                        if(this.plugin.getPlayerAPI().getPlayerGuildState(player).equals("Einsiedler"))
                         {
                             // Gilde beitreten Button
                             ElementButton joinGuild = new ElementButton("<-Gilde beitreten->");

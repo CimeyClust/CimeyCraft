@@ -27,12 +27,30 @@ public class PlotAPI
         this.config.set("plot."+chunk.getIndex()+".Z", z);
         this.config.set("plot."+chunk.getIndex()+".owner", player.getName());
         this.config.set("plot."+chunk.getIndex()+".status", "owned");
+        this.config.set("plot."+chunk.getIndex()+".guild", "");
         this.config.save(this.file);
     }
 
     public String getPlotOwner(FullChunk chunk)
     {
         return this.config.getString("plot."+chunk.getIndex()+".owner");
+    }
+
+    public void inheritGuild(FullChunk chunk, String guildName)
+    {
+        this.config.set("plot."+chunk.getIndex()+".guild", guildName);
+        this.config.save(this.file);
+    }
+
+    public void uninheritGuild(FullChunk chunk)
+    {
+        this.config.set("plot."+chunk.getIndex()+".guild", "");
+        this.config.save(this.file);
+    }
+
+    public String getGuild(FullChunk chunk)
+    {
+        return this.config.getString("plot."+chunk.getIndex()+".guild");
     }
 
     public String getPlotStatus(FullChunk chunk)

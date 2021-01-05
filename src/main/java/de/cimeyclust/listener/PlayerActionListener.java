@@ -9,15 +9,10 @@ import cn.nukkit.event.player.PlayerDeathEvent;
 import cn.nukkit.event.player.PlayerMoveEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemCompass;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
-import cn.nukkit.level.format.FullChunk;
 import de.cimeyclust.CimeyCraft;
 import de.cimeyclust.util.ScoreBoardManagerAPI;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class PlayerActionListener implements Listener
 {
@@ -37,6 +32,10 @@ public class PlayerActionListener implements Listener
                 scoreBoardManagerAPI.updateBoard("  §aX: §9" + event.getPlayer().getLocation().getChunk().getX(), 6);
                 scoreBoardManagerAPI.updateBoard("  §aY: §9" + event.getPlayer().getLocation().getChunk().getZ(), 7);
                 scoreBoardManagerAPI.updateBoard("  §aStatus: §9" + this.plugin.getPlotAPI().getPlotStatus(event.getPlayer().getLocation().getChunk()), 8);
+                if(!this.plugin.getPlotAPI().getGuild(player.getChunk()).equals(""))
+                {
+                    scoreBoardManagerAPI.updateBoard("  §aGilde: §9" + this.plugin.getPlotAPI().getGuild(event.getPlayer().getLocation().getChunk()), 9);
+                }
             } else {
                 ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
                 scoreBoardManagerAPI.updateBoard("  §aStatus: §9Frei", 5);
@@ -87,14 +86,14 @@ public class PlayerActionListener implements Listener
     {
         String message = event.getMessage();
         Player player = event.getPlayer();
-        if(this.plugin.getPlayerAPI().getPlayerGuildState(player.getName()).equals("Einsiedler"))
+        if(this.plugin.getPlayerAPI().getPlayerGuildState(player).equals("Einsiedler"))
         {
-            event.setMessage("[§aEinsiedler§f] [§e"+player.getName()+"§f] >> "+message);
+            event.setFormat("[§aEinsiedler§f] [§e"+player.getName()+"§f] >> " + message);
         }
 
-        if(this.plugin.getPlayerAPI().getPlayerGuildState(player.getName()).equals("Gildenmitglied"))
+        if(this.plugin.getPlayerAPI().getPlayerGuildState(player).equals("Gildenmitglied"))
         {
-            event.setMessage("[§aEinsiedler§f] [§e"+player.getName()+"§f] >> "+message);
+            event.setFormat("[§a"+this.plugin.getPlayerAPI().getGuild(player)+"§f] [§e"+player.getName()+"§f] >> " + message);
         }
     }
 }
