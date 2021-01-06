@@ -32,6 +32,11 @@
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="cloudburst" />
+      <option name="name" value="cloudburst" />
+      <option name="url" value="https://repo.opencollab.dev/maven-releases/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="public" />
       <option name="name" value="public" />
       <option name="url" value="http://repo.lucgameshd.de/repository/maven-public" />

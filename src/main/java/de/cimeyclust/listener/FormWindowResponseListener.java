@@ -42,36 +42,55 @@ public class FormWindowResponseListener implements Listener
                 FormWindowSimple formWindowSimple = (FormWindowSimple) event.getWindow();
                 FormResponseSimple formResponseSimple = (FormResponseSimple) event.getResponse();
 
-                if(formWindowSimple.getTitle().equals("Navigator"))
+                String text = formResponseSimple.getClickedButton().getText();
+
+                if(text.equals("Teleport"))
                 {
-                    String text = formResponseSimple.getClickedButton().getText();
-
-                    if(text.equals("Teleport"))
+                    Location teleportLocation = this.plugin.getLocationAPI().getLocation(player.getName());
+                    if(teleportLocation != null)
                     {
-                        Location teleportLocation = this.plugin.getLocationAPI().getLocation(player.getName());
-                        if(teleportLocation != null)
-                        {
-                            player.teleport(teleportLocation);
-                        }
-                        else
-                        {
-                            player.sendMessage("§cDu hast noch keinen Teleportations-Punkt für dich gesetzt! §cSetze ihn mit /setlocation!");
-                        }
+                        player.teleport(teleportLocation);
                     }
-                    else if(text.equals("Shop"))
+                    else {
+                        player.sendMessage("§cDu hast noch keinen Teleportations-Punkt für dich gesetzt! §cSetze ihn mit /setlocation!");
+                    }
+                }
+                else if(text.equals("Shop"))
+                {
+
+                }
+                else if(text.equals("Gilde"))
+                {
+                    FormWindowSimple window = new FormWindowSimple("Gilden-Management", "Hier kannst du alles, was mit Gilden zu tun hat, verwalten!");
+                    if(this.plugin.getPlayerAPI().getPlayerGuildState(player).equals("Einsiedler"))
+                    {
+                        // Gilde beitreten Button
+                        ElementButton joinGuild = new ElementButton("<-Gilde beitreten->");
+                        window.addButton(joinGuild);
+                        player.showFormWindow(window);
+                    }
+                    else
                     {
 
                     }
-                    else if(text.equals("Gilde"))
+                }
+                else if (text.equals("<-Gilde beitreten->"))
+                {
+                    FormWindowSimple window = new FormWindowSimple("Trete einer Gilde bei", "Hier kannst du Gilden beitreten oder ihnen Anfragen schicken!");
+                    for(String guildName : this.plugin.getGildenAPI().getGuilds())
                     {
-                        FormWindowSimple window = new FormWindowSimple("Gilden-Management", "Hier kannst du alles, was mit Gilden zu tun hat, verwalten!");
-                        if(this.plugin.getPlayerAPI().getPlayerGuildState(player).equals("Einsiedler"))
-                        {
-                            // Gilde beitreten Button
-                            ElementButton joinGuild = new ElementButton("<-Gilde beitreten->");
-                            window.addButton(joinGuild);
-                            player.showFormWindow(window);
-                        }
+                        window.addButton(new ElementButton(guildName+" - "+this.plugin.getGildenAPI().getGuildState(guildName)));
+                    }
+                    player.showFormWindow(window);
+                }
+                else if(this.plugin.getGildenAPI().getGuilds().contains(text.replace(" - privat", "")) || this.plugin.getGildenAPI().getGuilds().contains(text.replace(" - publik", "")))
+                {
+                    if(this.plugin.getGildenAPI().getGuildState(text.replace(" - publik", "")).equals("publik")) {
+                        this.plugin.getGildenAPI().joinGuild(text.replace(" - publik", ""), player);
+                        player.sendMessage("§aDu bist der Gilde " + text.replace(" - publik", "") + " beigetreten!");
+                    }
+                    else {
+                        player.sendMessage("§aDu hast eine Anfrage zum Beitritt an diese Gilde gesendet!");
                     }
                 }
             }

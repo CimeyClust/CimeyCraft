@@ -3,6 +3,7 @@ package de.cimeyclust.listener;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
+import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerDeathEvent;
@@ -62,12 +63,20 @@ public class PlayerActionListener implements Listener
     }
 
     @EventHandler
+    public void OnPlayerChooseGuildChest(BlockBreakEvent event)
+    {
+        if(this.plugin.getPlayerAPI().getGuildChest(event.getPlayer())){
+
+        }
+    }
+
+    @EventHandler
     public void OnPlayerDeath(PlayerDeathEvent event)
     {
         if(event.getEntity().getKiller() != null)
         {
             Item item = new Item(Item.PAPER);
-            item.setCustomName("§c"+event.getEntity().getPlayer().getName()+" getötet von "+event.getEntity().getKiller());
+            item.setCustomName("§c"+event.getEntity().getPlayer().getName()+" getötet von "+event.getEntity().getKiller().getName());
             event.getEntity().dropItem(item);
         }
     }

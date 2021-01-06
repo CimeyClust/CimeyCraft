@@ -66,6 +66,10 @@ public class PlayerJoinListener implements Listener
         {
             scoreBoardManagerAPI.addEntry("  §aGilde: §9"+this.plugin.getPlayerAPI().getGuild(event.getPlayer())+" ", 3);
         }
+        else
+        {
+            scoreBoardManagerAPI.addEntry(" ", 3);
+        }
         scoreBoardManagerAPI.addEntry("§3Plot:", 4);
         if(!this.plugin.getPlotAPI().getPlotStatus(event.getPlayer().getLocation().getChunk()).equals(""))
         {

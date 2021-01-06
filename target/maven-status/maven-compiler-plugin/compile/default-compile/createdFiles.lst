@@ -14,6 +14,7 @@ de\cimeyclust\listener\PlayerActionListener.class
 de\cimeyclust\util\GildenAPI.class
 de\cimeyclust\command\CommandSellPlot.class
 de\cimeyclust\CimeyCraft.class
+de\cimeyclust\util\GildenAPI$4.class
 de\cimeyclust\listener\ChatListener.class
 de\cimeyclust\command\CommandGuildMain.class
 de\cimeyclust\util\GildenAPI$1.class

@@ -27,6 +27,7 @@ public class CimeyCraft extends PluginBase
         this.locationAPI = new LocationAPI(this);
         this.plotAPI = new PlotAPI(this);
         this.gildenAPI = new GildenAPI(this);
+        this.gildenAPI.addDefault();
 
         this.registerCommand();
         this.registerListener();

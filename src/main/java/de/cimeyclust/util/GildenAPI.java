@@ -64,11 +64,14 @@ public class GildenAPI
     }
 
     public void createGuild(String guildName, Player player, String status) {
-        this.config.set("guilds", new ArrayList<String>(){{
-            this.add(guildName);
-        }});
+        List<String> list = new ArrayList<String>();
+        list = this.getGuilds();
+        list.add(guildName);
+        this.config.set("guilds", list);
         this.config.set("guild." + guildName + ".owner", player.getName());
-        this.config.set("guild." + guildName + ".verwalter", new ArrayList<String>());
+        this.config.set("guild." + guildName + ".verwalter", new ArrayList<String>(){{
+            this.add(player.getName());
+        }});
         this.config.set("guild." + guildName + ".member", new ArrayList<String>());
         this.config.set("guild." + guildName + ".plots.plotX", new ArrayList<Integer>(){{
             this.add(player.getChunk().getX());
@@ -76,29 +79,56 @@ public class GildenAPI
         this.config.set("guild." + guildName + ".plots.plotZ", new ArrayList<Integer>(){{
             this.add(player.getChunk().getZ());
         }});
+        this.config.set("guild."+guildName+".anfragen", new ArrayList<String>());
         this.addPlotToGuild(guildName, player.getChunkX(), player.getChunkZ());
         this.config.set("guild." + guildName + ".status", status);
         if(status.equals("privat"))
         {
             this.config.set("guild." + guildName + ".invites", new ArrayList<String>());
         }
-
-        this.config.set("guilds", new ArrayList<String>(){{
-            this.add(guildName);
-        }});
         this.config.save(this.file);
     }
 
-    public void createInvite(String guildName, Player player)
+    public void createInvite(String guildName, Player player, String invitedPlayerName)
     {
         if((this.getGuildAdmins(guildName).contains(player.getName()) || this.getGuildOwner(guildName).equals(player.getName())) && this.getGuildState(guildName).equals("privat")) {
-            byte[] array = new byte[6]; // length is bounded by 6
-            new Random().nextBytes(array);
-            String generatedString = new String(array, Charset.forName("UTF-8"));
+            List<String> list = new ArrayList<String>();
+            list = this.getInvites(guildName);
+            list.add(invitedPlayerName);
+            this.config.set("guild." + guildName + ".invites", list);
+            this.config.save(this.file);
+            player.sendMessage("§a"+invitedPlayerName+" erfolgreich auf die Einladungsliste gesetzt!");
+        }
+        else
+        {
+            player.sendMessage("§cDu musst Verwalter oder Owner der Gilde sein! Außerdem muss die Gilde privat gestellt sein, damit du Einladungen erstellen kannst.\nIn publike Gilden kann jeder Spieler joinen!");
+        }
+    }
 
-            this.config.set("guild." + guildName + ".invites", new ArrayList<String>() {{
-                this.add(generatedString);
-            }});
+    public void removeInvite(String guildName, Player player, String invitedPlayerName)
+    {
+        if((this.getGuildAdmins(guildName).contains(player.getName()) || this.getGuildOwner(guildName).equals(player.getName())) && this.getGuildState(guildName).equals("privat")) {
+            if(this.getInvites(guildName).contains(invitedPlayerName)){
+                List<String> list = new ArrayList<String>();
+                list = this.getInvites(guildName);
+                list.remove(invitedPlayerName);
+                this.config.set("guild." + guildName + ".invites", list);
+                this.config.save(this.file);
+
+                player.sendMessage("§a"+invitedPlayerName+" erfolgreich von der Einladungsliste entfernt!\nNoch vorhanden:");
+                for(String invite : this.getInvites(guildName))
+                {
+                    player.sendMessage(invite);
+                }
+            }
+            else
+            {
+                player.sendMessage("§cDer Spielername wurde nicht in der Einladungsliste gefunden!\nVorhanden sind:");
+                for(String invite : this.getInvites(guildName))
+                {
+                    player.sendMessage(invite);
+                }
+            }
         }
         else
         {
@@ -147,18 +177,27 @@ public class GildenAPI
 
     public void joinGuild(String guildName, Player player)
     {
-        this.config.set("guild." + guildName + ".member", new ArrayList<String>(){{
-            this.add(player.getName());
-        }});
+        List<String> list = new ArrayList<String>();
+        list = this.getGuildMember(guildName);
+        list.add(player.getName());
+        this.config.set("guild." + guildName + ".member", list);
         this.plugin.getPlayerAPI().setPlayerGuildState(player, "Gildenmitglied");
         this.plugin.getPlayerAPI().setGuild(player, guildName);
 
         ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
         if(!this.plugin.getPlayerAPI().getPlayerGuildState(player).equals("Einsiedler"))
         {
-            scoreBoardManagerAPI.addEntry("  §aGilde: §9"+this.plugin.getPlayerAPI().getGuild(player)+" ", 3);
+            scoreBoardManagerAPI.updateBoard("  §aGilde: §9"+this.plugin.getPlayerAPI().getGuild(player)+" ", 3);
         }
 
         this.config.save(this.file);
+    }
+
+    public void addDefault()
+    {
+        if(!this.config.exists("guilds")) {
+            this.config.set("guilds", new ArrayList<String>());
+            this.config.save(this.file);
+        }
     }
 }

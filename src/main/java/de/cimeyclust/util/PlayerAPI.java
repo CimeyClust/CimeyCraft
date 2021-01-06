@@ -51,6 +51,17 @@ public class PlayerAPI {
         }
     }
 
+    public boolean getGuildChest(Player player)
+    {
+        return this.config.getBoolean("player."+player.getName()+".chooseChest");
+    }
+
+    public void setGuildChest(Player player)
+    {
+        this.config.set("player."+player.getName()+".chooseChest", true);
+        this.config.save(this.file);
+    }
+
     public void setGuild(Player player, String guildName)
     {
         this.config.set("player."+player.getName()+".guild", guildName);
@@ -85,7 +96,8 @@ public class PlayerAPI {
             this.config.set("player." + player.getName() + ".coins", 900);
             this.config.set("player." + player.getName() + ".zugehoerigkeits-status", "Einsiedler");
             this.config.set("player."+player.getName()+".guild", "");
-            this.config.save(this.file);
         }
+        this.config.set("player."+player.getName()+".chooseChest", false);
+        this.config.save(this.file);
     }
 }
