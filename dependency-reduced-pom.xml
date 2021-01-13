@@ -38,22 +38,12 @@
       <id>releases</id>
       <url>http://repo.lucgameshd.de/repository/maven-public</url>
     </repository>
-    <repository>
-      <id>cloudburst</id>
-      <url>https://repo.opencollab.dev/maven-releases/</url>
-    </repository>
   </repositories>
   <dependencies>
     <dependency>
       <groupId>cn.nukkit</groupId>
       <artifactId>nukkit</artifactId>
       <version>1.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.cloudburstmc</groupId>
-      <artifactId>cloudburst-server</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

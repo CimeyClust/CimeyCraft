@@ -34,12 +34,9 @@ public class CommandGuildMain extends Command
                                             if(status.equals("privat") || status.equals("publik"))
                                             {
                                                 this.plugin.getPlayerAPI().setGuildChest(((Player) sender).getPlayer());
-                                                sender.sendMessage("§cSchlage (Standard: linke Maustaste) auf eine Truhe auf deinem Plot. Es wird zur Gilden-Truhe, auf die jeder Clanangehörige Zugriff hat!\nGebe /guild cancel ein, um den Vorgang abzubrechen!");
+                                                this.plugin.getPlayerAPI().setCurrent(((Player) sender).getPlayer(), name, status);
 
-                                                this.plugin.getPlayerAPI().pay(1200, ((Player) sender).getPlayer());
-                                                this.plugin.getGildenAPI().createGuild(name, ((Player) sender).getPlayer(), status);
-                                                this.plugin.getGildenAPI().joinGuild(name, ((Player) sender).getPlayer());
-                                                sender.sendMessage("§aDu hast erfolgreich die Gilde mit dem Namen "+name+" erstellt!");
+                                                sender.sendMessage("§cSchlage (Standard: linke Maustaste) auf eine Truhe auf deinem Plot. Es wird zur Gilden-Truhe, auf die jeder Clanangehörige Zugriff hat!\nGebe /guild cancel ein, um den Vorgang abzubrechen! (Vorgang wird nach Server-Neustart automatisch abgebrochen!)");
                                             }
                                             else
                                             {

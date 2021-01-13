@@ -23,10 +23,6 @@
             <id>releases</id>
             <url>http://repo.lucgameshd.de/repository/maven-public</url>
         </repository>
-        <repository>
-            <id>cloudburst</id>
-            <url>https://repo.opencollab.dev/maven-releases/</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -42,12 +38,6 @@
             <version>1.4</version>
             <scope>system</scope>
             <systemPath>D:/ScoreboardAPI.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.cloudburstmc</groupId>
-            <artifactId>cloudburst-server</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 

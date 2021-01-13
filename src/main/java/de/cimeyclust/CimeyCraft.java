@@ -49,6 +49,7 @@ public class CimeyCraft extends PluginBase
         commandMap.register("help", new CommandSellPlot("sell", "Verkaufe dein Plot für einen festgelegten Betrag! Du hast danach keinen Zugriff mehr auf dein Plot!", "§cUsage: /sell <Betrag>", this));
         commandMap.register("help", new CommandGiveMoney("givemoney", "Gibt den angegeben Betrag an CimeyCoins dem angegeben Spieler.", "§cUsage: /givemoney <amount> <player>", this));
         commandMap.register("help", new CommandGuildMain("guild", "Main-Command, der Gildenverwaltung.", "§cUsage:\n/guild create <Gildenname> <privat/publik>", this));
+        commandMap.register("help", new CancelCommand("cancel", "Bricht eine angefangene Aktion ab!", "§cUsage: /cancel", this));
     }
 
     private void registerListener()

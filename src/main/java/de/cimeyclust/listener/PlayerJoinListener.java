@@ -47,12 +47,17 @@ public class PlayerJoinListener implements Listener
     {
         if(!event.getPlayer().hasPlayedBefore())
         {
-            this.plugin.getPlayerAPI().addDefault(event.getPlayer());
             FormWindow window = new FormWindowSimple("§eWillkommen", "Hallo und willkommen auf unserem CimeyCraft-MCPE-RolePlay-Server!\n" +
                     "Kurzanleitung:\n1. Kaufe dir ein Plot\n2. Handle mit anderen Spielern\n3. Schütze dich vor anderen Spielern\n4. Schließe dich einer Gilde an\n" +
                     "Für weitere Hilfen und Informationen besuche unseren Discord-Server §ehttps://discord.gg/D2hcWACa93§f, frage andere Spieler oder benutze den §aNavigator.");
             event.getPlayer().showFormWindow(window);
         }
+        for(String guildName : this.plugin.getGildenAPI().getGuilds())
+        {
+            this.plugin.getGildenAPI().removeGuildFloatingText(guildName);
+            this.plugin.getGildenAPI().createGuildFloatingText(guildName);
+        }
+        this.plugin.getPlayerAPI().addDefault(event.getPlayer());
         Level level = event.getPlayer().getServer().getLevelByName("hub");
         Location loc = new Location(662, 67, 584, 0, 0, level);
         event.getPlayer().teleport(loc);

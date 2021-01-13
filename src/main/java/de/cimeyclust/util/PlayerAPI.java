@@ -53,12 +53,29 @@ public class PlayerAPI {
 
     public boolean getGuildChest(Player player)
     {
-        return this.config.getBoolean("player."+player.getName()+".chooseChest");
+        return this.config.getBoolean("player."+player.getName()+".currentGuild.chooseChest");
     }
 
     public void setGuildChest(Player player)
     {
-        this.config.set("player."+player.getName()+".chooseChest", true);
+        this.config.set("player."+player.getName()+".currentGuild.chooseChest", true);
+        this.config.save(this.file);
+    }
+
+    public String getCurrentName(Player player)
+    {
+        return this.config.getString("player."+player.getName()+".currentGuild.currentName");
+    }
+
+    public String getCurrentStatus(Player player)
+    {
+        return this.config.getString("player."+player.getName()+".currentGuild.currentStatus");
+    }
+
+    public void setCurrent(Player player, String name, String status)
+    {
+        this.config.set("player."+player.getName()+".currentGuild.currentName", name);
+        this.config.set("player."+player.getName()+".currentGuild.currentStatus", status);
         this.config.save(this.file);
     }
 
@@ -68,6 +85,12 @@ public class PlayerAPI {
         this.config.save(this.file);
         ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
         scoreBoardManagerAPI.updateBoard("  §aGilde: §9"+this.plugin.getPlayerAPI().getGuild(player)+"  ", 3);
+    }
+
+    public void setGuildWithPlayName(String playerName, String guildName)
+    {
+        this.config.set("player."+playerName+".guild", guildName);
+        this.config.save(this.file);
     }
 
     public void removeGuild(Player player)
@@ -92,12 +115,14 @@ public class PlayerAPI {
     }
 
     public void addDefault(Player player) {
-        if(this.getPlayerCoins(player.getName()) != null) {
+        if(!this.config.exists("player." + player.getName())) {
             this.config.set("player." + player.getName() + ".coins", 900);
             this.config.set("player." + player.getName() + ".zugehoerigkeits-status", "Einsiedler");
             this.config.set("player."+player.getName()+".guild", "");
         }
-        this.config.set("player."+player.getName()+".chooseChest", false);
+        this.config.set("player."+player.getName()+".currentGuild.chooseChest", false);
+        this.config.remove("player."+player.getName()+".currentGuild.currentName");
+        this.config.remove("player."+player.getName()+".currentGuild.currentStatus");
         this.config.save(this.file);
     }
 }

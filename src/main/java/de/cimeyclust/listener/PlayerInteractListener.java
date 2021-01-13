@@ -1,6 +1,7 @@
 package de.cimeyclust.listener;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockBreakEvent;
@@ -68,30 +69,50 @@ public class PlayerInteractListener implements Listener
     @EventHandler
     public void PlayerInteractWithBlock(PlayerInteractEvent event)
     {
-        Player player = (Player) event.getPlayer();
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
 
-        if(event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK)
-        {
-            if((!this.plugin.getPlotAPI().getPlotOwner(event.getBlock().getChunk()).equals(player.getName()) || !this.plugin.getPlotAPI().getPlotStatus(event.getBlock().getChunk()).equals("owned")) && !player.isOp())
-            {
-                event.setCancelled(true);
+        if(!this.plugin.getPlotAPI().getGuild(block.getChunk()).equals("")) {
+            if (event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
+                if (!(this.plugin.getPlotAPI().getPlotOwner(block.getChunk()).equals(player.getName()) || this.plugin.getPlotAPI().getGuild(block.getChunk()).equals(this.plugin.getPlayerAPI().getGuild(player)))) {
+                    event.setCancelled(true);
+                }
+            }
+            if (event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+                if (!(this.plugin.getPlotAPI().getPlotOwner(block.getChunk()).equals(player.getName()) || this.plugin.getPlotAPI().getGuild(block.getChunk()).equals(this.plugin.getPlayerAPI().getGuild(player)))) {
+                    event.setCancelled(true);
+                }
             }
         }
-        if(event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
-            if ((!this.plugin.getPlotAPI().getPlotOwner(event.getBlock().getChunk()).equals(player.getName()) || !this.plugin.getPlotAPI().getPlotStatus(event.getBlock().getChunk()).equals("owned")) && !player.isOp()) {
-                event.setCancelled(true);
+        else
+        {
+            if (!(this.plugin.getPlotAPI().getPlotOwner(block.getChunk()).equals(player.getName())))
+            {
+                if(!player.isOp()) {
+                    event.setCancelled(true);
+                }
             }
         }
     }
 
     @EventHandler
-    public void PlayerBreakWithBlock(BlockBreakEvent event)
+    public void PlayerBreakBlock(BlockBreakEvent event)
     {
-        Player player = (Player) event.getPlayer();
-
-        if((!this.plugin.getPlotAPI().getPlotOwner(event.getBlock().getChunk()).equals(player.getName()) || !this.plugin.getPlotAPI().getPlotStatus(event.getBlock().getChunk()).equals("owned")) && !player.isOp())
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+        if(!this.plugin.getPlotAPI().getGuild(block.getChunk()).equals("")) {
+            if (!(this.plugin.getPlotAPI().getPlotOwner(block.getChunk()).equals(player.getName()) || this.plugin.getPlotAPI().getGuild(block.getChunk()).equals(this.plugin.getPlayerAPI().getGuild(player)))) {
+                event.setCancelled(true);
+            }
+        }
+        else
         {
-            event.setCancelled(true);
+            if (!(this.plugin.getPlotAPI().getPlotOwner(block.getChunk()).equals(player.getName())))
+            {
+                if(!player.isOp()) {
+                    event.setCancelled(true);
+                }
+            }
         }
     }
 

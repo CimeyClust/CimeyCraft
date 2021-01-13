@@ -21,7 +21,7 @@ public class CommandGiveMoney extends Command {
         {
             if(args.length == 2)
             {
-                Player target = Server.getInstance().getPlayer(args[1]);
+                Player target = Server.getInstance().getPlayer(args[0]);
 
                 if(target == null)
                 {
@@ -31,7 +31,7 @@ public class CommandGiveMoney extends Command {
                 {
                     try
                     {
-                        Integer amount = Integer.parseInt(args[0]);
+                        Integer amount = Integer.parseInt(args[1]);
 
                         this.plugin.getPlayerAPI().incomeByPlayer(amount, target);
                         sender.sendMessage("§cErfolgreich den Betrag zum Guthaben des Spielers hinzugefügt!");

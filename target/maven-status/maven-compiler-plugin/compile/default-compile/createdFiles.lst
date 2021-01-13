@@ -2,11 +2,14 @@ de\cimeyclust\util\GildenAPI$2.class
 de\cimeyclust\command\CommandGiveMoney.class
 de\cimeyclust\command\InfoCommand.class
 de\cimeyclust\util\PlotAPI.class
+de\cimeyclust\command\CancelCommand.class
 de\cimeyclust\command\CommandSetLocation.class
 de\cimeyclust\command\CommandClaimPlot.class
 de\cimeyclust\listener\PlayerQuitListener.class
+de\cimeyclust\listener\FormWindowResponseListener$2.class
 de\cimeyclust\util\ScoreBoardManagerAPI.class
 de\cimeyclust\util\GildenAPI$3.class
+de\cimeyclust\listener\FormWindowResponseListener$1.class
 de\cimeyclust\listener\PlayerJoinListener.class
 de\cimeyclust\util\PlayerAPI.class
 de\cimeyclust\listener\FormWindowResponseListener.class
@@ -14,8 +17,6 @@ de\cimeyclust\listener\PlayerActionListener.class
 de\cimeyclust\util\GildenAPI.class
 de\cimeyclust\command\CommandSellPlot.class
 de\cimeyclust\CimeyCraft.class
-de\cimeyclust\util\GildenAPI$4.class
-de\cimeyclust\listener\ChatListener.class
 de\cimeyclust\command\CommandGuildMain.class
 de\cimeyclust\util\GildenAPI$1.class
 de\cimeyclust\util\LocationAPI.class

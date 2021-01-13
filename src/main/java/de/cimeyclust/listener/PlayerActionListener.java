@@ -1,14 +1,15 @@
 package de.cimeyclust.listener;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockChest;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
-import cn.nukkit.event.player.PlayerChatEvent;
-import cn.nukkit.event.player.PlayerDeathEvent;
-import cn.nukkit.event.player.PlayerMoveEvent;
-import cn.nukkit.event.player.PlayerRespawnEvent;
+import cn.nukkit.event.player.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -26,9 +27,9 @@ public class PlayerActionListener implements Listener
     @EventHandler
     public void OnSwitchPlot(PlayerMoveEvent event) {
         Player player = event.getPlayer();
+        ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
         if (player.getLevel().getFolderName().equals("hub")) {
             if (!this.plugin.getPlotAPI().getPlotStatus(event.getPlayer().getLocation().getChunk()).equals("")) {
-                ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
                 scoreBoardManagerAPI.updateBoard("  §aPlotowner: §9" + this.plugin.getPlotAPI().getPlotOwner(event.getPlayer().getLocation().getChunk()), 5);
                 scoreBoardManagerAPI.updateBoard("  §aX: §9" + event.getPlayer().getLocation().getChunk().getX(), 6);
                 scoreBoardManagerAPI.updateBoard("  §aY: §9" + event.getPlayer().getLocation().getChunk().getZ(), 7);
@@ -37,8 +38,11 @@ public class PlayerActionListener implements Listener
                 {
                     scoreBoardManagerAPI.updateBoard("  §aGilde: §9" + this.plugin.getPlotAPI().getGuild(event.getPlayer().getLocation().getChunk()), 9);
                 }
+                else
+                {
+                    scoreBoardManagerAPI.updateBoard(" ", 9);
+                }
             } else {
-                ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
                 scoreBoardManagerAPI.updateBoard("  §aStatus: §9Frei", 5);
                 scoreBoardManagerAPI.updateBoard("  §aX: §9" + event.getPlayer().getLocation().getChunk().getX(), 6);
                 scoreBoardManagerAPI.updateBoard("  §aY: §9" + event.getPlayer().getLocation().getChunk().getZ(), 7);
@@ -63,10 +67,34 @@ public class PlayerActionListener implements Listener
     }
 
     @EventHandler
-    public void OnPlayerChooseGuildChest(BlockBreakEvent event)
+    public void OnPlayerChooseGuildChest(PlayerInteractEvent event)
     {
-        if(this.plugin.getPlayerAPI().getGuildChest(event.getPlayer())){
-
+        if(event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
+            if (this.plugin.getPlayerAPI().getGuildChest(event.getPlayer())) {
+                Block block = event.getBlock();
+                if (block instanceof BlockChest) {
+                    BlockEntityChest chest = (BlockEntityChest) block.getLevel().getBlockEntity(block.getLocation());
+                    if (this.plugin.getPlotAPI().getPlotOwner(chest.getChunk()).equals(event.getPlayer().getName())) {
+                        if(this.plugin.getPlayerAPI().getPlayerCoins(event.getPlayer().getName()) >= 1200) {
+                            this.plugin.getPlayerAPI().pay(1200, event.getPlayer());
+                            this.plugin.getGildenAPI().createGuild(this.plugin.getPlayerAPI().getCurrentName(event.getPlayer()), event.getPlayer(), this.plugin.getPlayerAPI().getCurrentStatus(event.getPlayer()), chest);
+                            this.plugin.getGildenAPI().joinGuild(this.plugin.getPlayerAPI().getCurrentName(event.getPlayer()), event.getPlayer());
+                            event.getPlayer().sendMessage("§aDu hast erfolgreich die Gilde mit dem Namen " + this.plugin.getPlayerAPI().getCurrentName(event.getPlayer()) + " erstellt!");
+                            this.plugin.getPlayerAPI().addDefault(event.getPlayer());
+                            event.setCancelled(true);
+                        }
+                        else
+                        {
+                            event.getPlayer().sendMessage("§cDu brauchst 1200cc, um " +
+                                    "eine Gilde zu erstellen, du besitzt aber nur " + this.plugin.getPlayerAPI().getPlayerCoins(event.getPlayer().getName()) +
+                                    "cc!");
+                            event.setCancelled();
+                        }
+                    } else {
+                        event.getPlayer().sendMessage("§cDu musst eine Kiste auf deinem Plot auswählen!");
+                    }
+                }
+            }
         }
     }
 
