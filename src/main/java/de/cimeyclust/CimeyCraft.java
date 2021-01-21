@@ -3,6 +3,9 @@ package de.cimeyclust;
 import cn.nukkit.command.SimpleCommandMap;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.plugin.PluginManager;
+import cn.nukkit.plugin.service.RegisteredServiceProvider;
+import com.nukkitx.fakeinventories.inventory.ChestFakeInventory;
+import com.nukkitx.fakeinventories.inventory.FakeInventories;
 import de.cimeyclust.command.*;
 import de.cimeyclust.listener.*;
 import de.cimeyclust.util.*;
@@ -17,16 +20,23 @@ public class CimeyCraft extends PluginBase
     private GildenAPI gildenAPI;
     private LocationAPI locationAPI;
     private PlotAPI plotAPI;
+    private UsefulMethods usefulMethods;
     private Map<UUID, ScoreBoardManagerAPI> scoreBoardManagerAPIMap = new HashMap<>();
 
 
     @Override
     public void onEnable()
     {
+        RegisteredServiceProvider<FakeInventories> provider = getServer().getServiceManager().getProvider(FakeInventories.class);
+
+        if (provider == null || provider.getProvider() == null) {
+            this.getServer().getPluginManager().disablePlugin(this);
+        }
         this.playerAPI = new PlayerAPI(this);
         this.locationAPI = new LocationAPI(this);
         this.plotAPI = new PlotAPI(this);
         this.gildenAPI = new GildenAPI(this);
+        this.usefulMethods = new UsefulMethods(this);
         this.gildenAPI.addDefault();
 
         this.registerCommand();
@@ -47,7 +57,7 @@ public class CimeyCraft extends PluginBase
         commandMap.register("help", new CommandSetLocation("setLocation", "Setzt deine Teleport-Punkt-Lokation.", "§cUsage: /setLocation <name>", this));
         commandMap.register("help", new CommandClaimPlot("claim", "Claime ein freies oder zum Verkauf stehendes Plot für den Kostenbetrag!", "§cUsage: /claim", new String[]{"c"}, this));
         commandMap.register("help", new CommandSellPlot("sell", "Verkaufe dein Plot für einen festgelegten Betrag! Du hast danach keinen Zugriff mehr auf dein Plot!", "§cUsage: /sell <Betrag>", this));
-        commandMap.register("help", new CommandGiveMoney("givemoney", "Gibt den angegeben Betrag an CimeyCoins dem angegeben Spieler.", "§cUsage: /givemoney <amount> <player>", this));
+        commandMap.register("help", new CommandGiveMoney("givemoney", "Gibt den angegeben Betrag an CimeyCoins dem angegeben Spieler.", "§cUsage: /givemoney <player> <amount>", this));
         commandMap.register("help", new CommandGuildMain("guild", "Main-Command, der Gildenverwaltung.", "§cUsage:\n/guild create <Gildenname> <privat/publik>", this));
         commandMap.register("help", new CancelCommand("cancel", "Bricht eine angefangene Aktion ab!", "§cUsage: /cancel", this));
     }
@@ -82,5 +92,10 @@ public class CimeyCraft extends PluginBase
 
     public GildenAPI getGildenAPI() {
         return gildenAPI;
+    }
+
+    public UsefulMethods getUsefulMethods()
+    {
+        return usefulMethods;
     }
 }

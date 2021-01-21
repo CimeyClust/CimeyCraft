@@ -3,6 +3,7 @@ package de.cimeyclust.listener;
 import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.Attribute;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerJoinEvent;
@@ -28,7 +29,6 @@ public class PlayerJoinListener implements Listener
     public void OnPlayerJoin( PlayerJoinEvent event)
     {
         Player player = event.getPlayer();
-        player.setHealth(20);
         player.getFoodData().reset();
         player.setOnFire(0);
         if(!player.hasPlayedBefore())
@@ -45,6 +45,35 @@ public class PlayerJoinListener implements Listener
     @EventHandler
     public void PlayerInitializedListener(PlayerLocallyInitializedEvent event)
     {
+        Integer experience = event.getPlayer().getExperienceLevel();
+        event.getPlayer().setMaxHealth(10+experience);
+        if(this.plugin.getPlayerAPI().getPlayerGuildState(event.getPlayer()).equals("Gildenmitglied"))
+        {
+            // event.getPlayer().setDisplayName("[§9"+this.plugin.getPlayerAPI().getGuild(event.getPlayer())+"§f] §a"+event.getPlayer().getName());
+            if(!this.plugin.getPlayerAPI().getBounty(event.getPlayer().getName()).equals(0)) {
+                event.getPlayer().setNameTag("[§9" + this.plugin.getPlayerAPI().getGuild(event.getPlayer()) + "§f] §a" + event.getPlayer().getName()+" §c"+this.plugin.getPlayerAPI().getBounty(event.getPlayer().getName())+"cc");
+                event.getPlayer().setNameTagAlwaysVisible(true);
+            }
+            else
+            {
+                event.getPlayer().setNameTag("[§9" + this.plugin.getPlayerAPI().getGuild(event.getPlayer()) + "§f] §a" + event.getPlayer().getName());
+                event.getPlayer().setNameTagAlwaysVisible(true);
+            }
+        }
+        else
+        {
+            // event.getPlayer().setDisplayName("[§9Einsiedler§f] §a"+event.getPlayer().getName());
+            if(!this.plugin.getPlayerAPI().getBounty(event.getPlayer().getName()).equals(0)) {
+                event.getPlayer().setNameTag("[§9Einsiedler§f] §a" + event.getPlayer().getName() + " §c" + this.plugin.getPlayerAPI().getBounty(event.getPlayer().getName()) + "cc");
+                event.getPlayer().setNameTagAlwaysVisible(true);
+            }
+            else
+            {
+                event.getPlayer().setNameTag("[§9Einsiedler§f] §a" + event.getPlayer().getName());
+                event.getPlayer().setNameTagAlwaysVisible(true);
+            }
+        }
+
         if(!event.getPlayer().hasPlayedBefore())
         {
             FormWindow window = new FormWindowSimple("§eWillkommen", "Hallo und willkommen auf unserem CimeyCraft-MCPE-RolePlay-Server!\n" +

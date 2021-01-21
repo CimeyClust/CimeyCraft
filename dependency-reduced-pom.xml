@@ -47,6 +47,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>com.nukkitx</groupId>
+      <artifactId>fakeinventories</artifactId>
+      <version>1.0.3-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>de.lucgameshd</groupId>
       <artifactId>ScoreboardAPI</artifactId>
       <version>1.4</version>

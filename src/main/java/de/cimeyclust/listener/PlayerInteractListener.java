@@ -11,6 +11,7 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
 import cn.nukkit.form.element.ElementButton;
 import cn.nukkit.form.element.ElementButtonImageData;
+import cn.nukkit.form.element.ElementLabel;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
@@ -59,9 +60,16 @@ public class PlayerInteractListener implements Listener
             // Gilden Button
             ElementButton gildenButton = new ElementButton("Gilde");
             gildenButton.addImage(new ElementButtonImageData("path", "textures/blocks/beacon.png"));
+            // Task Button
+            ElementButton taskButton = new ElementButton("Kopfgeld aufgeben");
+            // Enderchest open button
+            ElementButton enderchestButton = new ElementButton("Enderinventar öffnen");
+            enderchestButton.addImage(new ElementButtonImageData("path", "textures/items/enderchest.png"));
             window.addButton(shopButton);
             window.addButton(teleportButton);
             window.addButton(gildenButton);
+            window.addButton(taskButton);
+            window.addButton(enderchestButton);
             player.showFormWindow(window);
         }
     }

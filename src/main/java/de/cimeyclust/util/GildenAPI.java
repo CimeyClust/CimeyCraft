@@ -11,12 +11,14 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.FloatingTextParticle;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.utils.Config;
+import cn.nukkit.utils.ConfigSection;
 import de.cimeyclust.CimeyCraft;
 
 import javax.swing.*;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.List;
 import java.util.Random;
 
@@ -124,6 +126,7 @@ public class GildenAPI
         {
             this.config.set("guild." + guildName + ".invites", new ArrayList<String>());
         }
+        this.config.set("guild." + guildName + ".auftraege", new ArrayList<Dictionary>());
         Level level = Server.getInstance().getLevelByName("hub");
         Location loc = new Location(this.getGuildChestX(guildName), (this.getGuildChestY(guildName)+2), this.getGuildChestZ(guildName), 0, 0, level);
         FloatingTextParticle floatingTextParticle = new FloatingTextParticle(loc, "§a"+guildName, "Gilden-Truhe");
@@ -247,7 +250,9 @@ public class GildenAPI
         list = this.getGuilds();
         list.remove(guildName);
         this.config.set("guilds", list);
-        this.config.remove("guild." + guildName);
+        ConfigSection section = this.config.getSection("guild");
+        section.remove(guildName);
+        this.config.save(this.file);
 
         this.config.save(this.file);
 
@@ -261,6 +266,36 @@ public class GildenAPI
             {
                 scoreBoardManagerAPI.updateBoard(" ", 3);
             }
+        }
+    }
+
+    public void leaveGuild(Player player, String guildName)
+    {
+        ScoreBoardManagerAPI scoreBoardManagerAPI = this.plugin.getScoreBoardManagerAPIMap().get(player.getUniqueId());
+        this.getGuildMember(guildName).remove(player.getName());
+        Integer i = 0;
+        while(i < this.getGuildPlotsX(guildName).size())
+        {
+            Integer x = this.getGuildPlotsX(guildName).get(i);
+            Integer z = this.getGuildPlotsZ(guildName).get(i);
+            FullChunk chunk = this.plugin.getServer().getLevelByName("hub").getChunk(x, z);
+            if(this.plugin.getPlotAPI().getPlotOwner(chunk).equals(player.getName()))
+            {
+                this.plugin.getPlotAPI().uninheritGuild(chunk);
+            }
+
+            i++;
+        }
+
+        this.plugin.getPlayerAPI().setGuild(player, "");
+        this.plugin.getPlayerAPI().setPlayerGuildState(player, "Einsiedler");
+        scoreBoardManagerAPI.updateBoard("  §aStatus: §9" + this.plugin.getPlayerAPI().getPlayerGuildState(player) + " ", 2);
+        if (!this.plugin.getPlayerAPI().getPlayerGuildState(player).equals("Einsiedler")) {
+            scoreBoardManagerAPI.updateBoard("  §aGilde: §9" + this.plugin.getPlayerAPI().getGuild(player) + " ", 3);
+        }
+        else
+        {
+            scoreBoardManagerAPI.updateBoard(" ", 3);
         }
     }
 
@@ -302,7 +337,7 @@ public class GildenAPI
     public void renameGuild(String oldGuildName, String newGuildName)
     {
         Integer i = 0;
-        while(i <= this.getGuilds().size())
+        while(i < this.getGuilds().size())
         {
             if(oldGuildName.equals(this.getGuilds().get(i)))
             {

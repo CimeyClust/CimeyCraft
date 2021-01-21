@@ -2,6 +2,7 @@ package de.cimeyclust.util;
 
 import cn.nukkit.Player;
 import cn.nukkit.utils.Config;
+import cn.nukkit.utils.ConfigSection;
 import de.cimeyclust.CimeyCraft;
 
 import java.io.File;
@@ -56,6 +57,21 @@ public class PlayerAPI {
         return this.config.getBoolean("player."+player.getName()+".currentGuild.chooseChest");
     }
 
+    public Integer getBounty(String playerName)
+    {
+        return this.config.getInt("player."+playerName+".bounty.amount");
+    }
+
+    public boolean getBountsItemsOnDeath(String playerName)
+    {
+        return this.config.getBoolean("player."+playerName+".bounty.getItems");
+    }
+
+    public String getBountyItemReceiver(String playerName)
+    {
+        return this.config.getString("player."+playerName+".bounty.receiver");
+    }
+
     public void setGuildChest(Player player)
     {
         this.config.set("player."+player.getName()+".currentGuild.chooseChest", true);
@@ -93,10 +109,37 @@ public class PlayerAPI {
         this.config.save(this.file);
     }
 
+    public void setBounty(String playerName, Integer amount)
+    {
+        this.config.set("player."+playerName+".bounty.amount", amount);
+    }
+
+    public void removeBounty(String playerName)
+    {
+        ConfigSection configSection = this.config.getSection("player."+playerName);
+        configSection.remove("bounty");
+        this.config.save(this.file);
+    }
+
+    public void setBountyGetItems(String playerName, Boolean getItems)
+    {
+        this.config.set("player."+playerName+".bounty.getItems", getItems);
+    }
+
+    public void setBountyGetItemsReceiver(String playerName, String receiverName)
+    {
+        this.config.set("player."+playerName+".bounty.receiver", receiverName);
+    }
+
     public void removeGuild(Player player)
     {
         this.config.set("player."+player.getName()+".guild", "");
         this.config.save(this.file);
+    }
+
+    public boolean checkIfExists(String playerName)
+    {
+        return this.config.exists("player."+playerName);
     }
 
     public String getGuild(Player player)

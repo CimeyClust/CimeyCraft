@@ -11,9 +11,16 @@ import cn.nukkit.form.response.FormResponseSimple;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
+import cn.nukkit.inventory.Inventory;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBook;
 import cn.nukkit.level.Location;
+import cn.nukkit.scheduler.NukkitRunnable;
+import cn.nukkit.scheduler.ServerScheduler;
+import com.nukkitx.fakeinventories.inventory.*;
 import de.cimeyclust.CimeyCraft;
 
+import java.text.Normalizer;
 import java.util.*;
 
 public class FormWindowResponseListener implements Listener
@@ -58,6 +65,17 @@ public class FormWindowResponseListener implements Listener
                 {
 
                 }
+
+                else if(simpleText.equals("Enderinventar öffnen"))
+                {
+                    FakeInventories inventory = new FakeInventories();
+                    ChestFakeInventory chestInventory = inventory.createChestInventory();
+                    chestInventory.addListener(this::onEnderSlotChange);
+                    chestInventory.setContents(player.getEnderChestInventory().getContents());
+                    chestInventory.setName("Ender-Inventar von "+player.getName());
+                    player.addWindow(chestInventory);
+                }
+
                 else if(simpleText.equals("Gilde"))
                 {
                     if(this.plugin.getPlayerAPI().getPlayerGuildState(player).equals("Einsiedler"))
@@ -124,6 +142,11 @@ public class FormWindowResponseListener implements Listener
                             // 7
                             window.addElement(deleteGuild);
                         }
+                        if(!this.plugin.getGildenAPI().getGuildOwner(this.plugin.getPlayerAPI().getGuild(player)).equals(player.getName())) {
+                            ElementToggle leaveGuild = new ElementToggle("§cGilde verlassen.\nJa oder Nein", false);
+                            // 8
+                            window.addElement(leaveGuild);
+                        }
 
                         player.showFormWindow(window);
                     }
@@ -159,7 +182,7 @@ public class FormWindowResponseListener implements Listener
                     }
                     player.showFormWindow(window);
                 }
-                else if(this.plugin.getGildenAPI().getGuilds().contains(simpleText.replace(" - privat", "")) || this.plugin.getGildenAPI().getGuilds().contains(simpleText.replace(" - publik", "")))
+                else if(formWindowSimple.getTitle().equals("Trete einer Gilde bei"))
                 {
                     if(this.plugin.getGildenAPI().getGuildState(simpleText.replace(" - publik", "")).equals("publik")) {
                         this.plugin.getGildenAPI().joinGuild(simpleText.replace(" - publik", ""), player);
@@ -168,6 +191,19 @@ public class FormWindowResponseListener implements Listener
                     else {
                         player.sendMessage("§aDu hast eine Anfrage zum Beitritt an diese Gilde gesendet!");
                     }
+                }
+                else if(simpleText.equals("Kopfgeld aufgeben"))
+                {
+                    FormWindowCustom window = new FormWindowCustom("Kopfgeld");
+                    // 0
+                    window.addElement(new ElementInput("Spielername:"));
+                    // 1
+                    window.addElement(new ElementInput("Kopfgeld:"));
+                    // 2
+                    window.addElement(new ElementLabel("§cFalls aktiviert, erhälst du nur so viele Items des Spielers, wie dein Inventar fassen kann. Sind dein EnderInventar und dein Inventar voll, verschwinden die Items!"));
+                    // 3
+                    window.addElement(new ElementToggle("Möchtest du die Items des Spielers nach dessen Tod erhalten? (kostet zusätzlich 1000cc)", false));
+                    player.showFormWindow(window);
                 }
             }
         }
@@ -210,6 +246,9 @@ public class FormWindowResponseListener implements Listener
                 else if(formWindowCustom.getTitle().equals("§a"+this.plugin.getPlayerAPI().getGuild(player)))
                 {
                     if(this.plugin.getGildenAPI().getGuildOwner(this.plugin.getPlayerAPI().getGuild(player)).equals(player.getName())) {
+
+                        // Defenition
+
                         String guildName = formResponseCustom.getInputResponse(4);
                         String status = formResponseCustom.getDropdownResponse(5).getElementContent();
                         String invitedName = null;
@@ -222,8 +261,39 @@ public class FormWindowResponseListener implements Listener
                         {
                             deleteGuild = formResponseCustom.getToggleResponse(6);
                         }
+                        Boolean leaveGuild = false;
+                        if(!(this.plugin.getGildenAPI().getGuildOwner(this.plugin.getPlayerAPI().getGuild(player)).equals(player.getName()) && this.plugin.getGildenAPI().getGuildAdmins(this.plugin.getPlayerAPI().getGuild(player)).contains(player.getName()))){
+                            leaveGuild = formResponseCustom.getToggleResponse(4);
+                        }
+                        else if(!this.plugin.getGildenAPI().getGuildOwner(this.plugin.getPlayerAPI().getGuild(player)).equals(player.getName()) && this.plugin.getGildenAPI().getGuildAdmins(this.plugin.getPlayerAPI().getGuild(player)).contains(player.getName()))
+                        {
+                            leaveGuild = formResponseCustom.getToggleResponse(5);
+                        }
                         if(!this.plugin.getGildenAPI().getGuildState(this.plugin.getPlayerAPI().getGuild(player)).equals(status)) {
                             this.plugin.getGildenAPI().setGuildState(this.plugin.getPlayerAPI().getGuild(player), status);
+                        }
+
+                        // Calls
+
+                        if(deleteGuild.equals(true))
+                        {
+                            FormWindowCustom deleteGuildWindow = new FormWindowCustom("§cLösche "+this.plugin.getPlayerAPI().getGuild(player));
+                            deleteGuildWindow.addElement(new ElementLabel("§cWas passiert?:"));
+                            deleteGuildWindow.addElement(new ElementLabel("  §c1. Alles Geld auf der Gildenbank wird an alle Mitglieder verteilt!"));
+                            deleteGuildWindow.addElement(new ElementLabel("  §c2. Alle Gildenplots werden an die ursprünglichen Besitzer zurückgegeben!"));
+                            deleteGuildWindow.addElement(new ElementLabel("  §c3. Alle Mitglieder werden aus der Gilde geworfen und alle Items in der Gildentruhe werden gelöscht!"));
+                            deleteGuildWindow.addElement(new ElementLabel("  §c4. Jedes Mitglied erhält seinen Status als Einsiedler zurück und Gildenpremien verfallen!"));
+                            deleteGuildWindow.addElement(new ElementLabel("  §c5. Du kannst dies nicht rückgängig machen! Möchtest du dich nicht umentscheiden?!"));
+                            deleteGuildWindow.addElement(new ElementInput("§cGebe den Namen deiner Gilde als Bestätigung ein!", this.plugin.getPlayerAPI().getGuild(player)));
+                            deleteGuildWindow.addElement(new ElementToggle("§cKlicke und setze den Schalter um, um die Gilde zu löschen und klicke dann auf \"Senden\"!", false));
+                            player.showFormWindow(deleteGuildWindow);
+                            return;
+                        }
+
+                        if(leaveGuild.equals(true))
+                        {
+                            this.plugin.getGildenAPI().leaveGuild(player, this.plugin.getPlayerAPI().getGuild(player));
+                            return;
                         }
                         if(invitedName != null) {
                             if (!invitedName.equals("")) {
@@ -240,19 +310,6 @@ public class FormWindowResponseListener implements Listener
                         else
                         {
                             player.sendMessage("§cDu kannst deinen Gildennamen nicht leer lassen!");
-                        }
-                        if(deleteGuild.equals(true))
-                        {
-                            FormWindowCustom deleteGuildWindow = new FormWindowCustom("§cLösche "+this.plugin.getPlayerAPI().getGuild(player));
-                            deleteGuildWindow.addElement(new ElementLabel("§cWas passiert?:"));
-                            deleteGuildWindow.addElement(new ElementLabel("  §c1. Alles Geld auf der Gildenbank wird an alle Mitglieder verteilt!"));
-                            deleteGuildWindow.addElement(new ElementLabel("  §c2. Alle Gildenplots werden an die ursprünglichen Besitzer zurückgegeben!"));
-                            deleteGuildWindow.addElement(new ElementLabel("  §c3. Alle Mitglieder werden aus der Gilde geworfen und alle Items in der Gildentruhe werden gelöscht!"));
-                            deleteGuildWindow.addElement(new ElementLabel("  §c4. Jedes Mitglied erhält seinen Status als Einsiedler zurück und Gildenpremien verfallen!"));
-                            deleteGuildWindow.addElement(new ElementLabel("  §c5. Du kannst dies nicht rückgängig machen! Möchtest du dich nicht umentscheiden?!"));
-                            deleteGuildWindow.addElement(new ElementInput("§cGebe den Namen deiner Gilde als Bestätigung ein!", this.plugin.getPlayerAPI().getGuild(player)));
-                            deleteGuildWindow.addElement(new ElementToggle("§cKlicke und setze den Schalter um, um die Gilde zu löschen und klicke dann auf \"Senden\"!", false));
-                            player.showFormWindow(deleteGuildWindow);
                         }
                     }
                     else if(this.plugin.getGildenAPI().getGuildState(this.plugin.getPlayerAPI().getGuild(player)).equals("privat") && this.plugin.getGildenAPI().getGuildAdmins(this.plugin.getPlayerAPI().getGuild(player)).contains(player.getName()))
@@ -276,7 +333,97 @@ public class FormWindowResponseListener implements Listener
                         player.sendMessage("§cEine der Bedingungen zum Löschen der Gilde wurden nicht erfüllt!");
                     }
                 }
+                else if(formWindowCustom.getTitle().equals("Kopfgeld"))
+                {
+                    String spielerName = formResponseCustom.getInputResponse(0);
+                    String betrag = formResponseCustom.getInputResponse(1);
+                    Boolean getItemsOnDeath = formResponseCustom.getToggleResponse(3);
+
+                    if(!this.plugin.getPlayerAPI().checkIfExists(spielerName))
+                    {
+                        player.sendMessage("§cDieser Spieler hat den Server nie zuvor betreten! Du kannst kein Kopfgeld auf einen nicht vorhandenen Spieler aussetzen!");
+                        return;
+                    }
+                    Integer intBetrag = 0;
+                    if(this.plugin.getUsefulMethods().isNumeric(betrag))
+                    {
+                        intBetrag = Integer.parseInt(betrag);
+                    }
+                    else
+                    {
+                        player.sendMessage("§cDen Betrag, den du eingegeben ist keine Zahl.");
+                        return;
+                    }
+                    if(getItemsOnDeath) {
+                        if (this.plugin.getPlayerAPI().getPlayerCoins(player.getName()) >= (intBetrag+1000))
+                        {
+                            this.plugin.getPlayerAPI().pay((intBetrag+1000), player);
+                            this.plugin.getPlayerAPI().setBounty(spielerName, intBetrag);
+                            this.plugin.getPlayerAPI().setBountyGetItems(spielerName, true);
+                            this.plugin.getPlayerAPI().setBountyGetItemsReceiver(spielerName, player.getName());
+
+                            Player target = (Player) this.plugin.getServer().getOfflinePlayer(spielerName);
+                            if(target.isOnline())
+                            {
+                                target = this.plugin.getServer().getPlayer(spielerName);
+                                target.sendMessage("§cAuf dich wurde ein Kopfgeld von "+intBetrag+"cc ausgesetzt! Pass auf dich auf!");
+                                if(this.plugin.getPlayerAPI().getPlayerGuildState(event.getPlayer()).equals("Gildenmitglied")) {
+                                    target.setNameTag("[§9" + this.plugin.getPlayerAPI().getGuild(event.getPlayer()) + "§f] §a" + event.getPlayer().getName()+" §c"+this.plugin.getPlayerAPI().getBounty(event.getPlayer().getName())+"cc");
+                                }
+                                else
+                                {
+                                    target.setNameTag("[§9Einsiedler§f] §a" + event.getPlayer().getName() + " §c" + this.plugin.getPlayerAPI().getBounty(event.getPlayer().getName()) + "cc");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            player.sendMessage("§cDür diesen Auftrag musst du "+(intBetrag+1000)+"cc bezahlen, du hast aber nur "+this.plugin.getPlayerAPI().getPlayerCoins(player.getName())+"cc!");
+                        }
+                    }
+                    else{
+                        if (this.plugin.getPlayerAPI().getPlayerCoins(player.getName()) >= intBetrag)
+                        {
+                            this.plugin.getPlayerAPI().setBounty(spielerName, intBetrag);
+                            this.plugin.getPlayerAPI().setBountyGetItems(spielerName, false);
+                            this.plugin.getPlayerAPI().setBountyGetItemsReceiver(spielerName, player.getName());
+                            Player target = (Player) this.plugin.getServer().getOfflinePlayer(spielerName);
+                            if(target.isOnline())
+                            {
+                                target = this.plugin.getServer().getPlayer(spielerName);
+                                target.sendMessage("§cAuf dich wurde ein Kopfgeld von "+intBetrag+"cc ausgesetzt! Pass auf dich auf!");
+                                if(this.plugin.getPlayerAPI().getPlayerGuildState(event.getPlayer()).equals("Gildenmitglied")) {
+                                    target.setNameTag("[§9" + this.plugin.getPlayerAPI().getGuild(event.getPlayer()) + "§f] §a" + event.getPlayer().getName()+" §c"+this.plugin.getPlayerAPI().getBounty(event.getPlayer().getName())+"cc");
+                                }
+                                else
+                                {
+                                    target.setNameTag("[§9Einsiedler§f] §a" + event.getPlayer().getName() + " §c" + this.plugin.getPlayerAPI().getBounty(event.getPlayer().getName()) + "cc");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            player.sendMessage("§cDür diesen Auftrag musst du "+(intBetrag)+"cc bezahlen, du hast aber nur "+this.plugin.getPlayerAPI().getPlayerCoins(plugin.getName())+"cc!");
+                        }
+                    }
+
+                }
             }
         }
+    }
+
+    private void onEnderSlotChange(FakeSlotChangeEvent e)
+    {
+        Player player = e.getPlayer();
+        Inventory enderChest = player.getEnderChestInventory();
+        int slot = e.getAction().getSlot();
+        Item item = e.getAction().getTargetItem();
+
+        this.plugin.getServer().getScheduler().scheduleDelayedRepeatingTask(this.plugin, new NukkitRunnable() {
+            @Override
+            public void run() {
+                enderChest.setContents(e.getInventory().getContents());
+            }
+        }, 1, 0);
     }
 }

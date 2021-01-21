@@ -8,13 +8,18 @@ import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockBreakEvent;
+import cn.nukkit.event.entity.EntityLevelChangeEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.*;
+import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBook;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import de.cimeyclust.CimeyCraft;
 import de.cimeyclust.util.ScoreBoardManagerAPI;
+
+import java.util.Map;
 
 public class PlayerActionListener implements Listener
 {
@@ -49,6 +54,16 @@ public class PlayerActionListener implements Listener
                 scoreBoardManagerAPI.updateBoard(" ", 8);
                 scoreBoardManagerAPI.updateBoard(" ", 9);
             }
+        }
+    }
+
+    @EventHandler
+    public void onLevelUp(EntityLevelChangeEvent event)
+    {
+        if(event.getEntity() instanceof Player) {
+            Player player = ((Player) event.getEntity()).getPlayer();
+
+            player.setMaxHealth(10+player.getExperienceLevel());
         }
     }
 
@@ -101,11 +116,51 @@ public class PlayerActionListener implements Listener
     @EventHandler
     public void OnPlayerDeath(PlayerDeathEvent event)
     {
-        if(event.getEntity().getKiller() != null)
-        {
+        if(event.getEntity().getKiller() != null && event.getEntity() instanceof Player) {
             Item item = new Item(Item.PAPER);
-            item.setCustomName("§c"+event.getEntity().getPlayer().getName()+" getötet von "+event.getEntity().getKiller().getName());
+            item.setCustomName("§c" + event.getEntity().getPlayer().getName() + " getötet von " + event.getEntity().getKiller().getName());
             event.getEntity().dropItem(item);
+            if (!this.plugin.getPlayerAPI().getBounty(event.getEntity().getPlayer().getName()).equals(0)) {
+                this.plugin.getPlayerAPI().incomeByPlayer(this.plugin.getPlayerAPI().getBounty(event.getEntity().getPlayer().getName()), event.getEntity().getKiller().getServer().getPlayer(event.getEntity().getKiller().getName()));
+                if (this.plugin.getPlayerAPI().getBountsItemsOnDeath(event.getEntity().getPlayer().getName())) {
+                    Player player = (Player) this.plugin.getServer().getOfflinePlayer(this.plugin.getPlayerAPI().getBountyItemReceiver(event.getEntity().getPlayer().getName()));
+                    Inventory inventory = player.getInventory();
+                    Inventory enderInventory = player.getEnderChestInventory();
+                    Map<Integer, Item> itemContents = player.getEnderChestInventory().getContents();
+                    for(Item newItem : itemContents.values())
+                    {
+                        if(inventory.canAddItem(newItem)) {
+                            inventory.addItem(newItem);
+                        }
+                        else if(enderInventory.canAddItem(newItem))
+                        {
+                            enderInventory.addItem(newItem);
+                        }
+                    }
+                }
+
+                this.plugin.getPlayerAPI().removeBounty(event.getEntity().getPlayer().getName());
+                if (this.plugin.getPlayerAPI().getPlayerGuildState(event.getEntity().getPlayer()).equals("Gildenmitglied")) {
+                    // event.getPlayer().setDisplayName("[§9"+this.plugin.getPlayerAPI().getGuild(event.getPlayer())+"§f] §a"+event.getPlayer().getName());
+                    if (!this.plugin.getPlayerAPI().getBounty(event.getEntity().getPlayer().getName()).equals(0)) {
+                        event.getEntity().getPlayer().setNameTag("[§9" + this.plugin.getPlayerAPI().getGuild(event.getEntity().getPlayer()) + "§f] §a" + event.getEntity().getPlayer().getName() + " §c" + this.plugin.getPlayerAPI().getBounty(event.getEntity().getPlayer().getName()) + "cc");
+                        event.getEntity().getPlayer().setNameTagAlwaysVisible(true);
+                    } else {
+                        event.getEntity().getPlayer().setNameTag("[§9" + this.plugin.getPlayerAPI().getGuild(event.getEntity().getPlayer()) + "§f] §a" + event.getEntity().getPlayer().getName());
+                        event.getEntity().getPlayer().setNameTagAlwaysVisible(true);
+                    }
+                } else {
+                    // event.getPlayer().setDisplayName("[§9Einsiedler§f] §a"+event.getPlayer().getName());
+                    if (!this.plugin.getPlayerAPI().getBounty(event.getEntity().getPlayer().getName()).equals(0)) {
+                        event.getEntity().getPlayer().setNameTag("[§9Einsiedler§f] §a" + event.getEntity().getPlayer().getName() + " §c" + this.plugin.getPlayerAPI().getBounty(event.getEntity().getPlayer().getName()) + "cc");
+                        event.getEntity().getPlayer().setNameTagAlwaysVisible(true);
+                    } else {
+                        event.getEntity().getPlayer().setNameTag("[§9Einsiedler§f] §a" + event.getEntity().getPlayer().getName());
+                        event.getEntity().getPlayer().setNameTagAlwaysVisible(true);
+                    }
+                }
+                this.plugin.getPlayerAPI().removeBounty(event.getEntity().getPlayer().getName());
+            }
         }
     }
 
